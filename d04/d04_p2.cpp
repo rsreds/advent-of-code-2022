@@ -10,14 +10,12 @@ int getOverlappingPairs(const char *filename)
   int sum{};
   while (std::getline(file, line))
   {
-    auto firstSeparatorPos = line.find('-');
-    auto secondSeparatorPos = line.find(',');
-    auto thirdSeparatorPos = line.find_last_of('-');
-    
-    auto firstSectionStart = std::stoi(line.substr(0, firstSeparatorPos));
-    auto firstSectionEnd = std::stoi(line.substr(firstSeparatorPos +1 , secondSeparatorPos - firstSeparatorPos -1));
-    auto secondSectionStart = std::stoi(line.substr(secondSeparatorPos +1, thirdSeparatorPos -secondSeparatorPos -1));
-    auto secondSectionEnd= std::stoi(line.substr(thirdSeparatorPos +1, line.length() - thirdSeparatorPos -1));
+    int firstSectionStart{};
+    int firstSectionEnd{};
+    int secondSectionStart{};
+    int secondSectionEnd{};
+
+    std::sscanf(line.c_str(), "%i-%i,%i-%i", &firstSectionStart, &firstSectionEnd, &secondSectionStart, &secondSectionEnd);
 
     auto firstSectionLenght = static_cast<size_t>(firstSectionEnd - firstSectionStart);
     auto secondSectionLenght = static_cast<size_t>(secondSectionEnd - secondSectionStart);
