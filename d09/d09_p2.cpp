@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include <map>
+#include <set>
 
 using Coordinates = std::pair<int, int>;
 
@@ -15,11 +15,11 @@ int getInstruction(const char *filename)
   std::ifstream file(filename);
   char direction{};
   int move{};
-  std::array<std::map<Coordinates, bool>, 10> rope;
+  std::array<std::vector<Coordinates>, 10> rope;
   Coordinates lastHeadPosition{0, 0};
-  for (auto &knot : rope)
+  for (int i = 0; i < 10; ++i)
   {
-    knot.insert({{0,0}, true});
+    rope[i].push_back({0,0});
   }
   while (file >> direction >> move)
   {
@@ -41,21 +41,22 @@ int getInstruction(const char *filename)
         ++lastHeadPosition.second;
         break;
       }
-      rope[0].insert({lastHeadPosition, true});
-      for (int i = 1; i < 10;++i)
+      rope[0].push_back(lastHeadPosition);
+      for (int i = 1; i < 10; ++i)
       {
-        Coordinates lastPosition = (--rope[i-1].end())->first;
-        Coordinates newPosition = (--rope[i].end())->first;
+        Coordinates lastPosition = rope[i - 1].back();
+        Coordinates newPosition = rope[i].back();
         if (distance(newPosition, lastPosition) > 1)
         {
           newPosition.first += (lastPosition.first - newPosition.first) != 0 ? (lastPosition.first - newPosition.first) / std::abs((lastPosition.first - newPosition.first)) : 0;
           newPosition.second += (lastPosition.second - newPosition.second) != 0 ? (lastPosition.second - newPosition.second) / std::abs((lastPosition.second - newPosition.second)) : 0;
         }
-        rope[i].insert({newPosition, true});
+        rope[i].push_back(newPosition);
       }
     }
   }
-  return rope[0].size();
+  std::set<Coordinates> s(rope[9].begin(), rope[9].end());
+  return s.size();
 }
 
 int main(int argc, char const *argv[])
